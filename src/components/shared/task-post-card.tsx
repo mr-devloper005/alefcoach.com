@@ -62,10 +62,10 @@ const cardStyles = {
     badge: 'bg-slate-950 text-white',
   },
   'editorial-feature': {
-    frame: 'rounded-[1.8rem] border border-[rgba(125,83,45,0.12)] bg-[#fffaf3] shadow-[0_18px_55px_rgba(89,52,24,0.1)] hover:-translate-y-1 hover:shadow-[0_26px_75px_rgba(89,52,24,0.14)]',
-    muted: 'text-[#71584b]',
-    title: 'text-[#2b1d17]',
-    badge: 'bg-[#2b1d17] text-[#fff3df]',
+    frame: 'rounded-[1.85rem] border border-emerald-200/80 bg-white shadow-[0_22px_56px_rgba(15,61,44,0.1)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_32px_70px_rgba(15,61,44,0.14)]',
+    muted: 'text-[#3d5248]',
+    title: 'text-[#0f2d22]',
+    badge: 'bg-[var(--kp-forest-deep)] text-[#ecfdf5]',
   },
   'studio-panel': {
     frame: 'rounded-[1.9rem] border border-white/10 bg-[linear-gradient(180deg,rgba(7,17,31,0.96),rgba(12,23,43,0.96))] text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)] hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(15,23,42,0.42)]',

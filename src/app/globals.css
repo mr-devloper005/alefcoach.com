@@ -4,25 +4,33 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.985 0.006 84);
-  --foreground: oklch(0.23 0.03 20);
-  --card: oklch(0.992 0.004 84 / 0.96);
-  --card-foreground: oklch(0.23 0.03 20);
-  --popover: oklch(0.992 0.004 84 / 0.98);
-  --popover-foreground: oklch(0.23 0.03 20);
-  --primary: oklch(0.41 0.15 10);
-  --primary-foreground: oklch(0.99 0.005 84);
-  --secondary: oklch(0.95 0.02 85);
-  --secondary-foreground: oklch(0.3 0.04 20);
-  --muted: oklch(0.955 0.012 85);
-  --muted-foreground: oklch(0.47 0.04 28);
-  --accent: oklch(0.76 0.1 155);
-  --accent-foreground: oklch(0.18 0.03 20);
-  --destructive: oklch(0.6 0.2 25);
+  /* KnowledgePulse / Alef Coach — forest, mint, lemon */
+  --kp-forest: #145239;
+  --kp-forest-deep: #0f3d2c;
+  --kp-mint: #e8f5ef;
+  --kp-mint-deep: #d4ebe0;
+  --kp-lemon: #f5e68a;
+  --kp-ink: #0f1f1a;
+
+  --background: oklch(0.96 0.02 155);
+  --foreground: oklch(0.22 0.04 155);
+  --card: oklch(0.995 0.005 155);
+  --card-foreground: oklch(0.22 0.04 155);
+  --popover: oklch(0.995 0.005 155);
+  --popover-foreground: oklch(0.22 0.04 155);
+  --primary: oklch(0.38 0.12 155);
+  --primary-foreground: oklch(0.99 0.01 155);
+  --secondary: oklch(0.94 0.02 155);
+  --secondary-foreground: oklch(0.28 0.05 155);
+  --muted: oklch(0.94 0.02 155);
+  --muted-foreground: oklch(0.45 0.04 155);
+  --accent: oklch(0.92 0.08 100);
+  --accent-foreground: oklch(0.22 0.04 155);
+  --destructive: oklch(0.55 0.2 25);
   --destructive-foreground: oklch(0.98 0.005 84);
-  --border: oklch(0.88 0.02 70);
-  --input: oklch(0.975 0.01 84);
-  --ring: oklch(0.41 0.15 10);
+  --border: oklch(0.88 0.03 155);
+  --input: oklch(0.98 0.01 155);
+  --ring: oklch(0.38 0.12 155);
   --chart-1: oklch(0.41 0.15 10);
   --chart-2: oklch(0.56 0.17 18);
   --chart-3: oklch(0.76 0.1 155);
@@ -128,9 +136,9 @@
     @apply bg-background text-foreground;
     min-height: 100vh;
     background-image:
-      radial-gradient(circle at top left, rgba(110, 26, 55, 0.09), transparent 32%),
-      radial-gradient(circle at top right, rgba(114, 186, 169, 0.12), transparent 28%),
-      linear-gradient(180deg, rgba(255, 252, 246, 0.96) 0%, rgba(250, 244, 235, 0.98) 36%, rgba(247, 241, 230, 1) 100%);
+      radial-gradient(circle at 12% 8%, rgba(245, 230, 138, 0.35), transparent 38%),
+      radial-gradient(circle at 88% 0%, rgba(20, 82, 57, 0.08), transparent 32%),
+      linear-gradient(180deg, var(--kp-mint) 0%, #f4fbf7 48%, #fafefd 100%);
     background-attachment: fixed;
   }
 
@@ -140,9 +148,10 @@
     inset: 0;
     pointer-events: none;
     z-index: -1;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.26) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
-    background-size: 120px 120px;
-    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent 70%);
+    background-image: linear-gradient(rgba(20, 82, 57, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20, 82, 57, 0.035) 1px, transparent 1px);
+    background-size: 96px 96px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.12), transparent 65%);
   }
 
   h1,
@@ -162,23 +171,23 @@
   }
 
   ::selection {
-    background: rgba(174, 36, 72, 0.18);
+    background: rgba(20, 82, 57, 0.18);
     color: inherit;
   }
 }
 
 @layer components {
   .paper-panel {
-    background: linear-gradient(180deg, rgba(255, 252, 247, 0.95), rgba(255, 248, 240, 0.88));
-    border: 1px solid rgba(110, 26, 55, 0.12);
-    box-shadow: 0 20px 60px rgba(80, 28, 36, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(232, 245, 239, 0.65));
+    border: 1px solid rgba(20, 82, 57, 0.12);
+    box-shadow: 0 20px 60px rgba(15, 61, 44, 0.07);
   }
 
   .editorial-label {
     @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em];
-    background: rgba(110, 26, 55, 0.08);
-    color: rgb(110, 26, 55);
-    border: 1px solid rgba(110, 26, 55, 0.12);
+    background: rgba(20, 82, 57, 0.1);
+    color: var(--kp-forest-deep);
+    border: 1px solid rgba(20, 82, 57, 0.15);
   }
 
   .editorial-divider {
@@ -192,7 +201,7 @@
     bottom: -1px;
     width: 132px;
     height: 2px;
-    background: linear-gradient(90deg, rgb(174, 36, 72), rgba(114, 186, 169, 0.55));
+    background: linear-gradient(90deg, var(--kp-forest), rgba(245, 230, 138, 0.85));
   }
 }
 
@@ -206,12 +215,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(110, 26, 55, 0.25);
+  background: rgba(20, 82, 57, 0.28);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(110, 26, 55, 0.42);
+  background: rgba(20, 82, 57, 0.45);
 }
 
 .reading-progress {
@@ -219,7 +228,7 @@
   top: 0;
   left: 0;
   height: 2px;
-  background: linear-gradient(90deg, rgb(174, 36, 72), rgb(114, 186, 169));
+  background: linear-gradient(90deg, var(--kp-forest), var(--kp-lemon));
   z-index: 100;
   transition: width 0.1s ease-out;
 }
@@ -229,7 +238,7 @@
   font-weight: 700;
   line-height: 1.25;
   margin: 2.2rem 0 1rem;
-  color: rgb(110, 26, 55);
+  color: var(--kp-forest-deep);
 }
 
 .article-content h3 {
@@ -244,7 +253,7 @@
 }
 
 .article-content a {
-  color: rgb(174, 36, 72);
+  color: var(--kp-forest);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
@@ -260,9 +269,16 @@ body[data-site-shell="directory"] {
 
 body[data-site-shell="editorial"] {
   background-image:
-    radial-gradient(circle at top left, rgba(245, 158, 11, 0.14), transparent 22%),
-    radial-gradient(circle at top right, rgba(120, 53, 15, 0.08), transparent 20%),
-    linear-gradient(180deg, rgba(255, 248, 239, 0.98) 0%, rgba(255, 252, 247, 1) 42%, rgba(255, 255, 255, 1) 100%);
+    radial-gradient(circle at top left, rgba(245, 230, 138, 0.35), transparent 28%),
+    radial-gradient(circle at top right, rgba(20, 82, 57, 0.07), transparent 26%),
+    linear-gradient(180deg, var(--kp-mint) 0%, #f7fcfa 45%, #ffffff 100%);
+}
+
+body[data-site-shell="article-home"] {
+  background-image:
+    radial-gradient(circle at 10% 12%, rgba(245, 230, 138, 0.4), transparent 36%),
+    radial-gradient(circle at 92% 8%, rgba(20, 82, 57, 0.06), transparent 30%),
+    linear-gradient(180deg, var(--kp-mint) 0%, #f5fbf8 40%, #ffffff 100%);
 }
 
 body[data-site-shell="studio"] {
@@ -282,8 +298,8 @@ body[data-site-shell="market"] {
 
 .factory-brand-editorial {
   background-image:
-    radial-gradient(circle at top left, rgba(251, 191, 36, 0.08), transparent 24%),
-    linear-gradient(180deg, rgba(255, 248, 238, 0.98) 0%, rgba(255, 241, 223, 1) 100%);
+    radial-gradient(circle at top left, rgba(245, 230, 138, 0.22), transparent 30%),
+    linear-gradient(180deg, var(--kp-mint) 0%, #f8fdfb 100%);
 }
 
 .factory-brand-directory {

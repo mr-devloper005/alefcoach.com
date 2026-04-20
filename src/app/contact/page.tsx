@@ -1,114 +1,183 @@
-import { Building2, FileText, Image as ImageIcon, Mail, MapPin, Phone, Sparkles, Bookmark } from 'lucide-react'
-import { NavbarShell } from '@/components/shared/navbar-shell'
-import { Footer } from '@/components/shared/footer'
+import Link from 'next/link'
+import { Clock, Mail, MessageSquare, Sparkles } from 'lucide-react'
+import { PageShell } from '@/components/shared/page-shell'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { SITE_CONFIG } from '@/lib/site-config'
-import { getFactoryState } from '@/design/factory/get-factory-state'
-import { getProductKind } from '@/design/factory/get-product-kind'
 import { CONTACT_PAGE_OVERRIDE_ENABLED, ContactPageOverride } from '@/overrides/contact-page'
 
-function getTone(kind: ReturnType<typeof getProductKind>) {
-  if (kind === 'directory') {
-    return {
-      shell: 'bg-[#f8fbff] text-slate-950',
-      panel: 'border border-slate-200 bg-white',
-      soft: 'border border-slate-200 bg-slate-50',
-      muted: 'text-slate-600',
-      action: 'bg-slate-950 text-white hover:bg-slate-800',
-    }
-  }
-  if (kind === 'editorial') {
-    return {
-      shell: 'bg-[#fbf6ee] text-[#241711]',
-      panel: 'border border-[#dcc8b7] bg-[#fffdfa]',
-      soft: 'border border-[#e6d6c8] bg-[#fff4e8]',
-      muted: 'text-[#6e5547]',
-      action: 'bg-[#241711] text-[#fff1e2] hover:bg-[#3a241b]',
-    }
-  }
-  if (kind === 'visual') {
-    return {
-      shell: 'bg-[#07101f] text-white',
-      panel: 'border border-white/10 bg-white/6',
-      soft: 'border border-white/10 bg-white/5',
-      muted: 'text-slate-300',
-      action: 'bg-[#8df0c8] text-[#07111f] hover:bg-[#77dfb8]',
-    }
-  }
-  return {
-    shell: 'bg-[#f7f1ea] text-[#261811]',
-    panel: 'border border-[#ddcdbd] bg-[#fffaf4]',
-    soft: 'border border-[#e8dbce] bg-[#f3e8db]',
-    muted: 'text-[#71574a]',
-    action: 'bg-[#5b2b3b] text-[#fff0f5] hover:bg-[#74364b]',
-  }
-}
+const channels = [
+  {
+    title: 'Email us',
+    description: 'Editorial, partnerships, and reader support — we read every message.',
+    icon: Mail,
+  },
+  {
+    title: 'Response time',
+    description: 'Most notes receive a first reply within two business days.',
+    icon: Clock,
+  },
+  {
+    title: 'What to include',
+    description: 'Topic, deadline, and links help us route your request faster.',
+    icon: MessageSquare,
+  },
+]
 
 export default function ContactPage() {
   if (CONTACT_PAGE_OVERRIDE_ENABLED) {
     return <ContactPageOverride />
   }
 
-  const { recipe } = getFactoryState()
-  const productKind = getProductKind(recipe)
-  const tone = getTone(productKind)
-  const lanes =
-    productKind === 'directory'
-      ? [
-          { icon: Building2, title: 'Business onboarding', body: 'Add listings, verify operational details, and bring your business surface live quickly.' },
-          { icon: Phone, title: 'Partnership support', body: 'Talk through bulk publishing, local growth, and operational setup questions.' },
-          { icon: MapPin, title: 'Coverage requests', body: 'Need a new geography or category lane? We can shape the directory around it.' },
-        ]
-      : productKind === 'editorial'
-        ? [
-            { icon: FileText, title: 'Editorial submissions', body: 'Pitch essays, columns, and long-form ideas that fit the publication.' },
-            { icon: Mail, title: 'Newsletter partnerships', body: 'Coordinate sponsorships, collaborations, and issue-level campaigns.' },
-            { icon: Sparkles, title: 'Contributor support', body: 'Get help with voice, formatting, and publication workflow questions.' },
-          ]
-        : productKind === 'visual'
-          ? [
-              { icon: ImageIcon, title: 'Creator collaborations', body: 'Discuss gallery launches, creator features, and visual campaigns.' },
-              { icon: Sparkles, title: 'Licensing and use', body: 'Reach out about usage rights, commercial requests, and visual partnerships.' },
-              { icon: Mail, title: 'Media kits', body: 'Request creator decks, editorial support, or visual feature placement.' },
-            ]
-          : [
-              { icon: Bookmark, title: 'Collection submissions', body: 'Suggest resources, boards, and links that deserve a place in the library.' },
-              { icon: Mail, title: 'Resource partnerships', body: 'Coordinate curation projects, reference pages, and link programs.' },
-              { icon: Sparkles, title: 'Curator support', body: 'Need help organizing shelves, collections, or profile-connected boards?' },
-            ]
-
   return (
-    <div className={`min-h-screen ${tone.shell}`}>
-      <NavbarShell />
-      <main className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <section className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Contact {SITE_CONFIG.name}</p>
-            <h1 className="mt-4 text-5xl font-semibold tracking-[-0.05em]">A support page that matches the product, not a generic contact form.</h1>
-            <p className={`mt-5 max-w-2xl text-sm leading-8 ${tone.muted}`}>Tell us what you are trying to publish, fix, or launch. We will route it through the right lane instead of forcing every request into the same support bucket.</p>
-            <div className="mt-8 space-y-4">
-              {lanes.map((lane) => (
-                <div key={lane.title} className={`rounded-[1.6rem] p-5 ${tone.soft}`}>
-                  <lane.icon className="h-5 w-5" />
-                  <h2 className="mt-3 text-xl font-semibold">{lane.title}</h2>
-                  <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{lane.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={`rounded-[2rem] p-7 ${tone.panel}`}>
-            <h2 className="text-2xl font-semibold">Send a message</h2>
-            <form className="mt-6 grid gap-4">
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Your name" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Email address" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="What do you need help with?" />
-              <textarea className="min-h-[180px] rounded-2xl border border-current/10 bg-transparent px-4 py-3 text-sm" placeholder="Share the full context so we can respond with the right next step." />
-              <button type="submit" className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold ${tone.action}`}>Send message</button>
+    <PageShell
+      title={`Contact ${SITE_CONFIG.name}`}
+      description={`Questions about stories, submissions, or working with ${SITE_CONFIG.name}? Send a note — we will point you to the right person.`}
+      actions={
+        <>
+          <Button
+            variant="outline"
+            asChild
+            className="rounded-full border-[var(--kp-forest)]/25 bg-white text-[var(--kp-forest-deep)] hover:bg-[var(--kp-mint)]"
+          >
+            <Link href="/about">About</Link>
+          </Button>
+          <Button asChild className="rounded-full bg-[var(--kp-forest)] text-white hover:bg-[var(--kp-forest-deep)]">
+            <Link href="/articles">Read articles</Link>
+          </Button>
+        </>
+      }
+    >
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <Card className="border-[var(--kp-forest)]/12 bg-white shadow-[0_20px_50px_rgba(15,61,44,0.06)]">
+          <CardContent className="space-y-5 p-6 sm:p-8">
+            <Badge className="border-[var(--kp-forest)]/15 bg-[var(--kp-mint)] text-[var(--kp-forest-deep)] hover:bg-[var(--kp-mint)]">
+              Get in touch
+            </Badge>
+            <h2 className="text-2xl font-semibold text-[var(--kp-forest-deep)]">Send a message</h2>
+            <p className="text-sm leading-relaxed text-[var(--kp-forest)]/75">
+              Share enough context for us to help on the first reply — whether it is a pitch, a correction, or a collaboration idea.
+            </p>
+            <form className="grid gap-4" action="#" method="post">
+              <input
+                name="name"
+                className="h-12 rounded-xl border border-[var(--kp-forest)]/18 bg-white px-4 text-sm text-[var(--kp-forest-deep)] outline-none placeholder:text-[var(--kp-forest)]/45 focus-visible:ring-2 focus-visible:ring-[var(--kp-forest)]/25"
+                placeholder="Your name"
+                autoComplete="name"
+              />
+              <input
+                name="email"
+                type="email"
+                className="h-12 rounded-xl border border-[var(--kp-forest)]/18 bg-white px-4 text-sm text-[var(--kp-forest-deep)] outline-none placeholder:text-[var(--kp-forest)]/45 focus-visible:ring-2 focus-visible:ring-[var(--kp-forest)]/25"
+                placeholder="Email address"
+                autoComplete="email"
+              />
+              <input
+                name="subject"
+                className="h-12 rounded-xl border border-[var(--kp-forest)]/18 bg-white px-4 text-sm text-[var(--kp-forest-deep)] outline-none placeholder:text-[var(--kp-forest)]/45 focus-visible:ring-2 focus-visible:ring-[var(--kp-forest)]/25"
+                placeholder="Topic (e.g. submission, partnership)"
+              />
+              <textarea
+                name="message"
+                className="min-h-[168px] rounded-2xl border border-[var(--kp-forest)]/18 bg-white px-4 py-3 text-sm text-[var(--kp-forest-deep)] outline-none placeholder:text-[var(--kp-forest)]/45 focus-visible:ring-2 focus-visible:ring-[var(--kp-forest)]/25"
+                placeholder="How can we help?"
+              />
+              <Button
+                type="submit"
+                className="h-12 rounded-full bg-[var(--kp-forest)] text-white hover:bg-[var(--kp-forest-deep)]"
+              >
+                Send message
+              </Button>
             </form>
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-4">
+          {channels.map(({ title, description, icon: Icon }) => (
+            <Card
+              key={title}
+              className="border-[var(--kp-forest)]/12 bg-white shadow-[0_12px_40px_rgba(15,61,44,0.05)] transition-transform hover:-translate-y-0.5"
+            >
+              <CardContent className="p-6">
+                <div className="flex gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--kp-mint)] text-[var(--kp-forest)]">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[var(--kp-forest-deep)]">{title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-[var(--kp-forest)]/75">{description}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          <Card className="border-[var(--kp-forest)]/12 bg-gradient-to-br from-[var(--kp-mint)] to-white">
+            <CardContent className="flex items-start gap-3 p-6">
+              <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-[var(--kp-forest)]" />
+              <p className="text-sm leading-relaxed text-[var(--kp-forest)]/80">
+                Prefer the full site story? Visit{' '}
+                <Link href="/about" className="font-semibold text-[var(--kp-forest)] underline-offset-4 hover:underline">
+                  About
+                </Link>{' '}
+                or meet the team on the{' '}
+                <Link href="/team" className="font-semibold text-[var(--kp-forest)] underline-offset-4 hover:underline">
+                  Team
+                </Link>{' '}
+                page.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="mt-14 grid gap-6 lg:grid-cols-2">
+        <Card className="border-[var(--kp-forest)]/12 bg-white shadow-[0_16px_48px_rgba(15,61,44,0.06)]">
+          <CardContent className="p-6 sm:p-8">
+            <Badge className="border-[var(--kp-forest)]/15 bg-[var(--kp-mint)] text-[var(--kp-forest-deep)] hover:bg-[var(--kp-mint)]">
+              Editorial desk
+            </Badge>
+            <h2 className="mt-4 text-xl font-semibold text-[var(--kp-forest-deep)]">What we can help with</h2>
+            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--kp-forest)]/78">
+              <li>Story pitches, corrections, and republication requests</li>
+              <li>Newsletter sponsorships and branded content guidelines</li>
+              <li>Speaking, workshops, and partnership inquiries</li>
+            </ul>
+          </CardContent>
+        </Card>
+        <Card className="border-[var(--kp-forest)]/12 bg-gradient-to-br from-white to-[var(--kp-mint)]/60 shadow-[0_16px_48px_rgba(15,61,44,0.05)]">
+          <CardContent className="p-6 sm:p-8">
+            <h2 className="text-xl font-semibold text-[var(--kp-forest-deep)]">Elsewhere on the site</h2>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--kp-forest)]/75">
+              Prefer browsing before you write? Explore recent work and company background—we answer faster when you&apos;ve
+              seen how we publish.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button
+                variant="outline"
+                asChild
+                className="rounded-full border-[var(--kp-forest)]/25 bg-white hover:bg-[var(--kp-mint)]"
+              >
+                <Link href="/articles">Latest articles</Link>
+              </Button>
+              <Button
+                variant="outline"
+                asChild
+                className="rounded-full border-[var(--kp-forest)]/25 bg-white hover:bg-[var(--kp-mint)]"
+              >
+                <Link href="/careers">Careers</Link>
+              </Button>
+              <Button
+                variant="outline"
+                asChild
+                className="rounded-full border-[var(--kp-forest)]/25 bg-white hover:bg-[var(--kp-mint)]"
+              >
+                <Link href="/press">Press</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </PageShell>
   )
 }

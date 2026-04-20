@@ -2,75 +2,78 @@ import type { TaskKey } from '@/lib/site-config'
 
 export const siteContent = {
   navbar: {
-    tagline: 'Independent editorial publication',
+    tagline: 'Ideas worth reading slowly',
   },
   footer: {
-    tagline: 'Articles, features, and thoughtful publishing',
+    tagline: 'Essays, reporting, and practical guides',
   },
   hero: {
-    badge: 'Editorial stories and guidance',
-    title: ['Read thoughtful publishing, essays, and idea-led articles.'],
+    badge: 'Editorial desk',
+    title: [
+      'Long-form articles built for focus, clarity, and calm reading.',
+      'Essays, explainers, and field notes from the desk.',
+    ],
     description:
-      'A reading-first editorial site for essays, stories, and perspective-driven publishing.',
+      'Alef Coach publishes thoughtful essays, explainers, and field notes for readers who prefer depth over noise.',
     primaryCta: {
-      label: 'Read articles',
+      label: 'Open articles',
       href: '/articles',
     },
     secondaryCta: {
-      label: 'Explore insights',
+      label: 'About',
       href: '/about',
     },
-    searchPlaceholder: 'Search articles, features, guides, and editorials',
-    focusLabel: 'Focus',
-    featureCardBadge: 'latest cover rotation',
-    featureCardTitle: 'Latest posts shape the visual identity of the homepage.',
+    searchPlaceholder: 'Search headlines, topics, and authors',
+    focusLabel: 'Topics',
+    featureCardBadge: 'Fresh from the feed',
+    featureCardTitle: 'New stories land here first.',
     featureCardDescription:
-      'Recent images and stories stay at the center of the experience without changing any core platform behavior.',
+      'The homepage highlights the latest writing while keeping the same publishing engine underneath.',
   },
   home: {
     metadata: {
-      title: 'Stories, visuals, and discoverable content',
+      title: 'Articles, essays, and editorial notes',
       description:
-        'Explore articles, images, listings, and curated posts through a cleaner reading-first experience.',
-      openGraphTitle: 'Stories, visuals, and discoverable content',
+        'Read long-form articles, practical guides, and editorial coverage in a calm, mint-and-forest reading environment.',
+      openGraphTitle: 'Articles, essays, and editorial notes',
       openGraphDescription:
-        'Discover articles, visual posts, and connected content through a calmer reading-first experience.',
-      keywords: ['story platform', 'article site', 'visual content', 'content discovery'],
+        'Essays, explainers, and reporting with typography tuned for sustained reading.',
+      keywords: ['articles', 'essays', 'editorial', 'Alef Coach', 'long-form'],
     },
-    introBadge: 'About the platform',
-    introTitle: 'Built for reading, browsing, and connecting different kinds of content.',
+    introBadge: 'Why we publish',
+    introTitle: 'Editorial clarity without the generic “platform” noise.',
     introParagraphs: [
-      'This site brings together article-style reading, visual browsing, and structured discovery so visitors can move naturally between different content types.',
-      'Instead of separating stories, visuals, and supporting resources into disconnected surfaces, the platform keeps them connected in one place with consistent navigation and easier exploration.',
-      'Whether someone starts with a story, an image-led post, a listing, or a resource page, they can keep discovering related content without friction.',
+      'Every story is presented with generous spacing, restrained chrome, and typography that respects long sessions at the screen.',
+      'Browse by topic, search the archive, or jump straight into the latest pieces—without wading through unrelated product lanes in the main navigation.',
+      'The same robust task system still powers the site behind the scenes; the interface simply keeps articles in the spotlight.',
     ],
-    sideBadge: 'At a glance',
+    sideBadge: 'Reading promise',
     sidePoints: [
-      'Reading-first homepage with stronger emphasis on stories and imagery.',
-      'Connected sections for articles, visuals, listings, and supporting resources.',
-      'Cleaner browsing rhythm designed to make exploration feel easier.',
-      'Lightweight interactions that keep the experience fast and readable.',
+      'Forest-and-mint palette tuned for low eye strain.',
+      'Cards and heroes designed around imagery and headlines first.',
+      'Fast, lightweight motion—no gimmicky transitions.',
+      'Mobile layouts that keep the article grid scannable.',
     ],
     primaryLink: {
       label: 'Browse articles',
       href: '/articles',
     },
     secondaryLink: {
-      label: 'See visuals',
-      href: '/images',
+      label: 'Search',
+      href: '/search',
     },
   },
   cta: {
-    badge: 'Start exploring',
-    title: 'Explore articles, visuals, and resources through one connected experience.',
+    badge: 'Stay current',
+    title: 'Save articles, follow topics, and read on your schedule.',
     description:
-      'Move between articles, image-led posts, listings, and resources through one clearer and more connected visual system.',
+      'Create a free account to bookmark pieces and pick up where you left off across devices.',
     primaryCta: {
-      label: 'Get Started Free',
+      label: 'Create free account',
       href: '/register',
     },
     secondaryCta: {
-      label: 'Contact Sales',
+      label: 'Contact',
       href: '/contact',
     },
   },
@@ -130,13 +133,13 @@ export const taskIntroCopy: Record<
     title: 'Articles, stories, and long-form reading',
     paragraphs: [
       'This section is built for stories, explainers, guides, and long-form reading across topics and interests.',
-      'Articles connect with listings, images, resources, and other content types so deeper reading can lead naturally into related discovery.',
-      'Use this section to browse thoughtful posts, revisit useful writing, and move into supporting content when you want more context.',
+      'Filters and search help you move between topics without losing the editorial rhythm of the page.',
+      'Use this section to browse thoughtful posts, revisit useful writing, and share pieces worth returning to.',
     ],
     links: [
-      { label: 'Explore listings', href: '/listings' },
-      { label: 'Open images', href: '/images' },
-      { label: 'Browse resources', href: '/pdf' },
+      { label: 'Editorial home', href: '/' },
+      { label: 'Search archive', href: '/search' },
+      { label: 'About', href: '/about' },
     ],
   },
   classified: {

@@ -267,44 +267,52 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
         >
           <div className={cn(isClassified ? "space-y-8" : "")}>
             {isArticle ? (
-              <div className="mx-auto w-full max-w-4xl space-y-6">
-                <h1 className="text-4xl font-semibold leading-tight text-foreground">
-                  {post.title}
-                </h1>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  <span>By {articleAuthor}</span>
-                  {articleDate ? <span>{articleDate}</span> : null}
-                  <Badge variant="secondary" className="inline-flex items-center gap-1">
+              <div className="w-full">
+                <div className="relative overflow-hidden rounded-[2rem] bg-[var(--kp-forest)] px-4 pb-24 pt-10 text-center sm:px-10 sm:pb-28 sm:pt-12">
+                  <div className="pointer-events-none absolute left-6 top-6 h-14 w-14 rounded-full bg-[var(--kp-lemon)]/40 blur-[1px]" aria-hidden />
+                  <div className="pointer-events-none absolute bottom-4 right-10 h-10 w-20 rounded-full bg-[var(--kp-lemon)]/30" aria-hidden />
+                  <Badge variant="secondary" className="border-white/25 bg-white/15 text-white hover:bg-white/20">
                     <Tag className="h-3.5 w-3.5" />
                     {category}
                   </Badge>
+                  <h1 className="mx-auto mt-5 max-w-4xl font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.12] text-white sm:text-5xl">
+                    {post.title}
+                  </h1>
+                  <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-white/85">
+                    <span>By {articleAuthor}</span>
+                    {articleDate ? <span>{articleDate}</span> : null}
+                  </div>
                 </div>
-                {postTags.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {postTags.map((tag) => (
-                      <Badge key={tag} variant="outline">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : null}
-                {articleSummary ? (
-                  <p className="text-base leading-7 text-muted-foreground">{articleSummary}</p>
-                ) : null}
                 {images[0] ? (
-                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted">
-                    <ContentImage
-                      src={images[0]}
-                      alt={`${post.title} featured image`}
-                      fill
-                      className="object-cover"
-                      intrinsicWidth={1600}
-                      intrinsicHeight={900}
-                    />
+                  <div className="relative z-10 -mt-16 mx-auto max-w-4xl px-3 sm:-mt-20 sm:px-0">
+                    <div className="relative aspect-[16/9] overflow-hidden rounded-[1.75rem] border-4 border-white bg-muted shadow-[0_28px_80px_rgba(15,61,44,0.22)]">
+                      <ContentImage
+                        src={images[0]}
+                        alt={`${post.title} featured image`}
+                        fill
+                        className="object-cover"
+                        intrinsicWidth={1600}
+                        intrinsicHeight={900}
+                      />
+                    </div>
                   </div>
                 ) : null}
-                <RichContent html={articleHtml} className="leading-8 prose-p:my-6 prose-h2:my-8 prose-h3:my-6 prose-ul:my-6" />
-                <ArticleComments slug={post.slug} />
+                <div className="mx-auto mt-12 w-full max-w-3xl space-y-6 px-1">
+                  {postTags.length ? (
+                    <div className="flex flex-wrap gap-2">
+                      {postTags.map((tag) => (
+                        <Badge key={tag} variant="outline" className="border-[var(--kp-forest)]/25 text-[var(--kp-forest-deep)]">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : null}
+                  {articleSummary ? (
+                    <p className="text-lg leading-8 text-muted-foreground">{articleSummary}</p>
+                  ) : null}
+                  <RichContent html={articleHtml} className="article-content leading-8 prose-p:my-6 prose-h2:my-8 prose-h3:my-6 prose-ul:my-6" />
+                  <ArticleComments slug={post.slug} />
+                </div>
               </div>
             ) : null}
 

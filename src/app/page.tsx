@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Bookmark, Building2, Compass, FileText, Globe2, Image as ImageIcon, LayoutGrid, MapPin, ShieldCheck, Tag, User } from 'lucide-react'
+import { ArticleTopicPills } from '@/components/home/article-topic-pills'
 import { ContentImage } from '@/components/shared/content-image'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
@@ -39,6 +41,14 @@ const taskIcons: Record<TaskKey, any> = {
   classified: Tag,
   image: ImageIcon,
   profile: User,
+  pdf: FileText,
+  org: Building2,
+  social: Bookmark,
+  comment: FileText,
+}
+
+function readPostTask(post: SitePost): unknown {
+  return (post as SitePost & { task?: unknown }).task
 }
 
 function resolveTaskKey(value: unknown, fallback: TaskKey): TaskKey {
@@ -96,19 +106,6 @@ function getDirectoryTone(brandPack: string) {
     badge: 'bg-slate-950 text-white',
     action: 'bg-slate-950 text-white hover:bg-slate-800',
     actionAlt: 'border border-slate-200 bg-white text-slate-950 hover:bg-slate-100',
-  }
-}
-
-function getEditorialTone() {
-  return {
-    shell: 'bg-[#fbf6ee] text-[#241711]',
-    panel: 'border border-[#dcc8b7] bg-[#fffdfa] shadow-[0_24px_60px_rgba(77,47,27,0.08)]',
-    soft: 'border border-[#e6d6c8] bg-[#fff4e8]',
-    muted: 'text-[#6e5547]',
-    title: 'text-[#241711]',
-    badge: 'bg-[#241711] text-[#fff1e2]',
-    action: 'bg-[#241711] text-[#fff1e2] hover:bg-[#3a241b]',
-    actionAlt: 'border border-[#dcc8b7] bg-transparent text-[#241711] hover:bg-[#f5e7d7]',
   }
 }
 
@@ -247,14 +244,14 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
           <div className="grid gap-4 md:grid-cols-2">
             {(profilePosts.length ? profilePosts : classifiedPosts).slice(0, 4).map((post) => {
               const meta = getPostMeta(post)
-              const taskKey = resolveTaskKey(post.task, profilePosts.length ? 'profile' : 'classified')
+              const taskKey = resolveTaskKey(readPostTask(post), profilePosts.length ? 'profile' : 'classified')
               return (
                 <Link key={post.id} href={getTaskHref(taskKey, post.slug)} className={`overflow-hidden rounded-[1.8rem] ${tone.panel}`}>
                   <div className="relative h-44 overflow-hidden">
                     <ContentImage src={getPostImage(post)} alt={post.title} fill className="object-cover" />
                   </div>
                   <div className="p-5">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.24em] opacity-70">{meta.category || post.task || 'Profile'}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.24em] opacity-70">{meta.category || String(readPostTask(post) ?? '') || 'Profile'}</p>
                     <h3 className="mt-2 text-xl font-semibold">{post.title}</h3>
                     <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{post.summary || 'Quick access to local information and related surfaces.'}</p>
                   </div>
@@ -268,76 +265,63 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
   )
 }
 
-function EditorialHome({ primaryTask, articlePosts, supportTasks }: { primaryTask?: EnabledTask; articlePosts: SitePost[]; supportTasks: EnabledTask[] }) {
-  const tone = getEditorialTone()
-  const lead = articlePosts[0]
-  const side = articlePosts.slice(1, 5)
+function EditorialHome({ primaryTask, articlePosts }: { primaryTask?: EnabledTask; articlePosts: SitePost[] }) {
+  const gridPosts = articlePosts.slice(0, 9)
 
   return (
-    <main className={tone.shell}>
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
-        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-          <div>
-            <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] ${tone.badge}`}>
-              <FileText className="h-3.5 w-3.5" />
-              Reading-first publication
-            </span>
-            <h1 className={`mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.06em] sm:text-6xl ${tone.title}`}>
-              Essays, analysis, and slower reading designed like a publication, not a dashboard.
-            </h1>
-            <p className={`mt-6 max-w-2xl text-base leading-8 ${tone.muted}`}>{SITE_CONFIG.description}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={primaryTask?.route || '/articles'} className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
-                Start reading
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link href="/about" className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.actionAlt}`}>
-                About the publication
-              </Link>
-            </div>
-          </div>
-
-          <aside className={`rounded-[2rem] p-6 ${tone.panel}`}>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Inside this issue</p>
-            <div className="mt-5 space-y-5">
-              {side.map((post) => (
-                <Link key={post.id} href={`/articles/${post.slug}`} className="block border-b border-black/10 pb-5 last:border-b-0 last:pb-0">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-60">Feature</p>
-                  <h3 className="mt-2 text-xl font-semibold">{post.title}</h3>
-                  <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{post.summary || 'Long-form perspective with a calmer reading rhythm.'}</p>
-                </Link>
-              ))}
-            </div>
-          </aside>
-        </div>
-
-        {lead ? (
-          <div className={`mt-12 overflow-hidden rounded-[2.5rem] ${tone.panel}`}>
-            <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
-              <div className="relative min-h-[360px] overflow-hidden">
-                <ContentImage src={getPostImage(lead)} alt={lead.title} fill className="object-cover" />
-              </div>
-              <div className="p-8 lg:p-10">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Lead story</p>
-                <h2 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">{lead.title}</h2>
-                <p className={`mt-4 text-sm leading-8 ${tone.muted}`}>{lead.summary || 'A more deliberate lead story surface with room for a proper narrative setup.'}</p>
-                <Link href={`/articles/${lead.slug}`} className={`mt-8 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
-                  Read article
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {supportTasks.slice(0, 3).map((task) => (
-            <Link key={task.key} href={task.route} className={`rounded-[1.8rem] p-6 ${tone.soft}`}>
-              <h3 className="text-xl font-semibold">{task.label}</h3>
-              <p className={`mt-3 text-sm leading-7 ${tone.muted}`}>{task.description}</p>
+    <main className="bg-[var(--kp-mint)] text-[var(--kp-ink)]">
+      <section className="mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 lg:px-8 lg:pb-20 lg:pt-12">
+        <div className="relative overflow-hidden rounded-[2rem] bg-[var(--kp-forest)] px-6 py-14 text-center shadow-[0_28px_80px_rgba(15,61,44,0.28)] sm:px-10 sm:py-16">
+          <div className="pointer-events-none absolute -left-8 top-6 h-20 w-20 rounded-full bg-[var(--kp-lemon)] opacity-90 blur-[2px]" aria-hidden />
+          <div className="pointer-events-none absolute -right-6 bottom-4 h-16 w-28 rounded-full bg-[var(--kp-lemon)]/85" aria-hidden />
+          <div className="pointer-events-none absolute right-10 top-10 h-10 w-10 rounded-full border-2 border-[var(--kp-lemon)]/50" aria-hidden />
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/85">Blog</p>
+          <h1 className="mt-4 font-[family-name:var(--font-display)] text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">Articles &amp; News</h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/88">{SITE_CONFIG.description}</p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              href={primaryTask?.route || '/articles'}
+              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[var(--kp-forest)] shadow-lg transition hover:bg-[var(--kp-mint)]"
+            >
+              Browse articles
+              <ArrowRight className="h-4 w-4" />
             </Link>
-          ))}
+            <Link
+              href="/search"
+              className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
+            >
+              Search library
+            </Link>
+          </div>
         </div>
+
+        <div className="mt-14 flex flex-col gap-6 border-b border-[var(--kp-forest)]/10 pb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-[-0.03em] text-[var(--kp-forest-deep)]">Latest articles</h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-[var(--kp-forest)]/75">Pick a topic to match the articles index — same data and routes, clearer scanning.</p>
+          </div>
+          <Suspense fallback={<div className="h-10 w-full max-w-md animate-pulse rounded-full bg-white/60" />}>
+            <ArticleTopicPills className="justify-end" />
+          </Suspense>
+        </div>
+
+        {gridPosts.length ? (
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {gridPosts.map((post) => (
+              <TaskPostCard key={post.id} post={post} href={getTaskHref('article', post.slug)} taskKey="article" />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-12 rounded-[1.75rem] border border-dashed border-[var(--kp-forest)]/25 bg-white/80 px-6 py-16 text-center">
+            <FileText className="mx-auto h-10 w-10 text-[var(--kp-forest)]/50" />
+            <p className="mt-4 text-lg font-semibold text-[var(--kp-forest-deep)]">Fresh stories are on the way</p>
+            <p className="mt-2 text-sm text-[var(--kp-forest)]/70">When new articles sync in, they will appear here in this grid.</p>
+            <Link href="/articles" className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--kp-forest)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-95">
+              Open the archive
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
       </section>
     </main>
   )
@@ -375,7 +359,7 @@ function VisualHome({ primaryTask, imagePosts, profilePosts, articlePosts }: { p
             {gallery.slice(0, 5).map((post, index) => (
               <Link
                 key={post.id}
-                href={getTaskHref(resolveTaskKey(post.task, 'image'), post.slug)}
+                href={getTaskHref(resolveTaskKey(readPostTask(post), 'image'), post.slug)}
                 className={index === 0 ? `col-span-2 row-span-2 overflow-hidden rounded-[2.4rem] ${tone.panel}` : `overflow-hidden rounded-[1.8rem] ${tone.soft}`}
               >
                 <div className={index === 0 ? 'relative h-[360px]' : 'relative h-[170px]'}>
@@ -440,7 +424,7 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts, articlePosts }
 
           <div className="grid gap-4 md:grid-cols-2">
             {collections.map((post) => (
-              <Link key={post.id} href={getTaskHref(resolveTaskKey(post.task, 'sbm'), post.slug)} className={`rounded-[1.8rem] p-6 ${tone.panel}`}>
+              <Link key={post.id} href={getTaskHref(resolveTaskKey(readPostTask(post), 'sbm'), post.slug)} className={`rounded-[1.8rem] p-6 ${tone.panel}`}>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Collection</p>
                 <h3 className="mt-3 text-2xl font-semibold">{post.title}</h3>
                 <p className={`mt-3 text-sm leading-8 ${tone.muted}`}>{post.summary || 'A calmer bookmark surface with room for context and grouping.'}</p>
@@ -477,8 +461,9 @@ export default async function HomePage() {
     return <HomePageOverride />
   }
 
-  const enabledTasks = SITE_CONFIG.tasks.filter((task) => task.enabled)
   const { recipe } = getFactoryState()
+  const recipeTaskKeys = new Set<string>(recipe.enabledTasks)
+  const enabledTasks = SITE_CONFIG.tasks.filter((task) => task.enabled && recipeTaskKeys.has(task.key))
   const productKind = getProductKind(recipe)
   const taskFeed: TaskFeedItem[] = (
     await Promise.all(
@@ -490,7 +475,6 @@ export default async function HomePage() {
   ).filter(({ posts }) => posts.length)
 
   const primaryTask = enabledTasks.find((task) => task.key === recipe.primaryTask) || enabledTasks[0]
-  const supportTasks = enabledTasks.filter((task) => task.key !== primaryTask?.key)
   const listingPosts = taskFeed.find(({ task }) => task.key === 'listing')?.posts || []
   const classifiedPosts = taskFeed.find(({ task }) => task.key === 'classified')?.posts || []
   const articlePosts = taskFeed.find(({ task }) => task.key === 'article')?.posts || []
@@ -534,9 +518,7 @@ export default async function HomePage() {
           brandPack={recipe.brandPack}
         />
       ) : null}
-      {productKind === 'editorial' ? (
-        <EditorialHome primaryTask={primaryTask} articlePosts={articlePosts} supportTasks={supportTasks} />
-      ) : null}
+      {productKind === 'editorial' ? <EditorialHome primaryTask={primaryTask} articlePosts={articlePosts} /> : null}
       {productKind === 'visual' ? (
         <VisualHome primaryTask={primaryTask} imagePosts={imagePosts} profilePosts={profilePosts} articlePosts={articlePosts} />
       ) : null}
