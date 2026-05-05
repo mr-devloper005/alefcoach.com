@@ -98,7 +98,6 @@ export default function PressPage() {
                     {item.outlet}
                   </div>
                   <p className="mt-2 text-sm font-medium leading-snug text-[var(--kp-forest-deep)]">{item.headline}</p>
-                  <p className="mt-3 text-xs text-[var(--kp-forest)]/55">{item.date}</p>
                 </CardContent>
               </Card>
             ))}

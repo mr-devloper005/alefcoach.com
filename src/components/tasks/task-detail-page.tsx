@@ -1,7 +1,7 @@
-import { ContentImage } from "@/components/shared/content-image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin, Globe, Phone, Tag, Mail } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowRight, Globe, Mail, MapPin, Phone, Tag } from "lucide-react";
 import { NavbarShell } from "@/components/shared/navbar-shell";
 import { Footer } from "@/components/shared/footer";
 import { TaskPostCard } from "@/components/shared/task-post-card";
@@ -11,14 +11,11 @@ import { buildPostUrl, fetchTaskPostBySlug, fetchTaskPosts } from "@/lib/task-da
 import { SITE_CONFIG, getTaskConfig, type TaskKey } from "@/lib/site-config";
 import type { SitePost } from "@/lib/site-connector";
 import { TaskImageCarousel } from "@/components/tasks/task-image-carousel";
-import { cn } from "@/lib/utils";
 import { ArticleComments } from "@/components/tasks/article-comments";
 import { SchemaJsonLd } from "@/components/seo/schema-jsonld";
 import { RichContent, formatRichHtml } from "@/components/shared/rich-content";
-import { getFactoryState } from "@/design/factory/get-factory-state";
-import { getProductKind } from "@/design/factory/get-product-kind";
-import { DirectoryTaskDetailPage } from "@/design/products/directory/task-detail-page";
 import { TASK_DETAIL_PAGE_OVERRIDE_ENABLED, TaskDetailPageOverride } from "@/overrides/task-detail-page";
+import { LightboxImage } from "@/components/shared/lightbox-image";
 
 type PostContent = {
   category?: string;
@@ -123,6 +120,19 @@ const buildMapEmbedUrl = (
   return null;
 };
 
+const InfoRow = ({
+  icon: Icon,
+  children,
+}: {
+  icon: typeof Globe;
+  children: ReactNode;
+}) => (
+  <div className="flex items-start gap-3 rounded-2xl border border-[var(--kp-forest)]/12 bg-[var(--kp-mint)]/40 p-3 text-sm text-[var(--kp-forest)]/75">
+    <Icon className="mt-0.5 h-4 w-4 text-[var(--kp-forest)]" />
+    <div className="min-w-0 flex-1">{children}</div>
+  </div>
+);
+
 export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: string }) {
   if (TASK_DETAIL_PAGE_OVERRIDE_ENABLED) {
     return await TaskDetailPageOverride({ task, slug });
@@ -141,20 +151,14 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
   }
 
   const content = getContent(post);
-  const isClassified = task === "classified";
   const isArticle = task === "article";
   const category = content.category || post.tags?.[0] || taskConfig?.label || task;
   const description = content.description || post.summary || "Details coming soon.";
   const descriptionHtml = !isArticle ? formatRichHtml(description, "Details coming soon.") : "";
   const articleHtml = isArticle ? formatArticleHtml(content, post) : "";
-  const articleSummary =
-    post.summary ||
-    (typeof content.excerpt === "string" ? content.excerpt : "") ||
-    "";
+  const articleSummary = post.summary || (typeof content.excerpt === "string" ? content.excerpt : "") || "";
   const articleAuthor =
-    (typeof content.author === "string" && content.author.trim()) ||
-    post.authorName ||
-    "Editorial Team";
+    (typeof content.author === "string" && content.author.trim()) || post.authorName || "Editorial Team";
   const articleDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-IN", {
         year: "numeric",
@@ -166,8 +170,6 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
   const location = content.address || content.location;
   const images = getImageUrls(post, content);
   const mapEmbedUrl = buildMapEmbedUrl(content.latitude, content.longitude, location);
-  const isBookmark = task === "sbm" || task === "social";
-  const hideSidebar = isClassified || isArticle || task === "image" || isBookmark;
   const related = (await fetchTaskPosts(task, 6))
     .filter((item) => item.slug !== post.slug)
     .filter((item) => {
@@ -224,325 +226,242 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
     ],
   };
   const schemaPayload = articleSchema ? [articleSchema, breadcrumbSchema] : breadcrumbSchema;
-  const { recipe } = getFactoryState();
-  const productKind = getProductKind(recipe);
 
-  if (productKind === "directory" && (task === "listing" || task === "classified" || task === "profile")) {
+  if (isArticle) {
     return (
-      <div className="min-h-screen bg-[#f8fbff]">
+      <div className="min-h-screen bg-[linear-gradient(180deg,var(--kp-mint)_0%,#f7fdf9_28%,#ffffff_100%)]">
         <NavbarShell />
-        <DirectoryTaskDetailPage
-          task={task}
-          taskLabel={taskConfig?.label || task}
-          taskRoute={taskConfig?.route || "/"}
-          post={post}
-          description={description}
-          category={category}
-          images={images}
-          mapEmbedUrl={mapEmbedUrl}
-          related={related}
-        />
+        <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          <SchemaJsonLd data={schemaPayload} />
+          <Link
+            href={taskConfig?.route || "/"}
+            className="inline-flex items-center text-sm font-medium text-[var(--kp-forest)] hover:text-[var(--kp-forest-deep)]"
+          >
+            Back to {taskConfig?.label || "posts"}
+          </Link>
+
+          <section className="mt-6 overflow-hidden rounded-[2rem] border border-[var(--kp-forest)]/20 bg-[linear-gradient(135deg,var(--kp-forest)_0%,var(--kp-forest-deep)_56%,var(--kp-forest)_100%)] text-white shadow-[0_32px_90px_rgba(15,61,44,0.18)]">
+            <div className="grid gap-8 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end lg:px-10 lg:py-12">
+              <div>
+                <Badge className="border-white/20 bg-white/10 text-white hover:bg-white/10">
+                  <Tag className="h-3.5 w-3.5" />
+                  {category}
+                </Badge>
+                <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
+                  {post.title}
+                </h1>
+                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/82">
+                  <span>By {articleAuthor}</span>
+                </div>
+                {articleSummary ? (
+                  <p className="mt-6 max-w-2xl text-sm leading-7 text-white/84">{articleSummary}</p>
+                ) : null}
+              </div>
+              <div className="rounded-[1.8rem] border border-white/14 bg-white/10 p-3 backdrop-blur-sm">
+                <div className="relative aspect-[16/11] overflow-hidden rounded-[1.4rem] bg-[#d9c7b8]">
+                  <LightboxImage
+                    src={images[0]}
+                    alt={`${post.title} featured image`}
+                    sizes="(max-width: 1024px) 100vw, 720px"
+                    imageClassName="object-cover"
+                    intrinsicWidth={1600}
+                    intrinsicHeight={1100}
+                    priority
+                    hint="Open image"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="mx-auto mt-10 max-w-5xl">
+            <div className="rounded-[1.85rem] border border-[var(--kp-forest)]/12 bg-white p-6 shadow-[0_18px_50px_rgba(15,61,44,0.07)] sm:p-8">
+              {postTags.length ? (
+                <div className="mb-6 flex flex-wrap gap-2">
+                  {postTags.map((tag) => (
+                    <Badge key={tag} variant="outline" className="border-[var(--kp-forest)]/20 text-[var(--kp-forest)]">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              ) : null}
+              <RichContent
+                html={articleHtml}
+                className="article-content prose-p:my-6 prose-h2:my-8 prose-h3:my-6"
+              />
+              <ArticleComments slug={post.slug} />
+            </div>
+
+          </section>
+        </main>
         <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[linear-gradient(180deg,var(--kp-mint)_0%,#f7fdf9_28%,#ffffff_100%)]">
       <NavbarShell />
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <SchemaJsonLd data={schemaPayload} />
         <Link
           href={taskConfig?.route || "/"}
-          className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center text-sm font-medium text-[var(--kp-forest)] hover:text-[var(--kp-forest-deep)]"
         >
-          ← Back to {taskConfig?.label || "posts"}
+          Back to {taskConfig?.label || "posts"}
         </Link>
 
-        <div
-          className={cn(
-            "grid gap-10",
-            hideSidebar ? "lg:grid-cols-1" : "lg:grid-cols-[2fr_1fr]"
-          )}
-        >
-          <div className={cn(isClassified ? "space-y-8" : "")}>
-            {isArticle ? (
-              <div className="w-full">
-                <div className="relative overflow-hidden rounded-[2rem] bg-[var(--kp-forest)] px-4 pb-24 pt-10 text-center sm:px-10 sm:pb-28 sm:pt-12">
-                  <div className="pointer-events-none absolute left-6 top-6 h-14 w-14 rounded-full bg-[var(--kp-lemon)]/40 blur-[1px]" aria-hidden />
-                  <div className="pointer-events-none absolute bottom-4 right-10 h-10 w-20 rounded-full bg-[var(--kp-lemon)]/30" aria-hidden />
-                  <Badge variant="secondary" className="border-white/25 bg-white/15 text-white hover:bg-white/20">
-                    <Tag className="h-3.5 w-3.5" />
-                    {category}
-                  </Badge>
-                  <h1 className="mx-auto mt-5 max-w-4xl font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.12] text-white sm:text-5xl">
-                    {post.title}
-                  </h1>
-                  <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-white/85">
-                    <span>By {articleAuthor}</span>
-                    {articleDate ? <span>{articleDate}</span> : null}
-                  </div>
-                </div>
-                {images[0] ? (
-                  <div className="relative z-10 -mt-16 mx-auto max-w-4xl px-3 sm:-mt-20 sm:px-0">
-                    <div className="relative aspect-[16/9] overflow-hidden rounded-[1.75rem] border-4 border-white bg-muted shadow-[0_28px_80px_rgba(15,61,44,0.22)]">
-                      <ContentImage
-                        src={images[0]}
-                        alt={`${post.title} featured image`}
-                        fill
-                        className="object-cover"
-                        intrinsicWidth={1600}
-                        intrinsicHeight={900}
-                      />
-                    </div>
-                  </div>
-                ) : null}
-                <div className="mx-auto mt-12 w-full max-w-3xl space-y-6 px-1">
-                  {postTags.length ? (
-                    <div className="flex flex-wrap gap-2">
-                      {postTags.map((tag) => (
-                        <Badge key={tag} variant="outline" className="border-[var(--kp-forest)]/25 text-[var(--kp-forest-deep)]">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : null}
-                  {articleSummary ? (
-                    <p className="text-lg leading-8 text-muted-foreground">{articleSummary}</p>
-                  ) : null}
-                  <RichContent html={articleHtml} className="article-content leading-8 prose-p:my-6 prose-h2:my-8 prose-h3:my-6 prose-ul:my-6" />
-                  <ArticleComments slug={post.slug} />
-                </div>
+        <section className="mt-6 grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="rounded-[2rem] border border-[var(--kp-forest)]/20 bg-[linear-gradient(135deg,var(--kp-forest)_0%,var(--kp-forest-deep)_56%,var(--kp-forest)_100%)] p-6 text-white shadow-[0_30px_90px_rgba(15,61,44,0.18)] sm:p-8">
+            <Badge className="border-white/20 bg-white/10 text-white hover:bg-white/10">
+              <Tag className="h-3.5 w-3.5" />
+              {category}
+            </Badge>
+            <h1 className="mt-5 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">{post.title}</h1>
+            {location ? (
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/10 px-4 py-2 text-sm text-white/88">
+                <MapPin className="h-4 w-4" />
+                {location}
               </div>
             ) : null}
+            <div className="mt-6 max-w-2xl text-sm leading-7 text-white/84">
+              <RichContent html={descriptionHtml} />
+            </div>
+            <div className="mt-7 flex flex-wrap gap-3">
+              {content.website ? (
+                <Button asChild className="rounded-full bg-white text-[#6f4336] hover:bg-[#faeee2]">
+                  <a href={content.website} target="_blank" rel="noreferrer">
+                    Visit website
+                  </a>
+                </Button>
+              ) : null}
+              {content.email ? (
+                <Button asChild variant="outline" className="rounded-full border-white/25 bg-white/10 text-white hover:bg-white/16">
+                  <a href={`mailto:${content.email}`}>Email now</a>
+                </Button>
+              ) : null}
+            </div>
+          </div>
 
-            {!isArticle ? (
-              <>
-                {!isBookmark ? (
-                  <div className={cn(isClassified ? "w-full" : "")}>
-                    <TaskImageCarousel images={images} />
-                  </div>
-                ) : null}
+          <div className="rounded-[2rem] border border-[var(--kp-forest)]/12 bg-white p-4 shadow-[0_18px_50px_rgba(15,61,44,0.07)]">
+            <TaskImageCarousel images={images} />
+          </div>
+        </section>
 
-                <div className={cn(isClassified ? "mx-auto w-full max-w-4xl" : "mt-6")}>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                    <Badge variant="secondary" className="inline-flex items-center gap-1">
-                      <Tag className="h-3.5 w-3.5" />
-                      {category}
-                    </Badge>
-                    {location && (
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {location}
-                      </span>
-                    )}
-                  </div>
-                  <h1 className="mt-4 text-3xl font-semibold text-foreground">{post.title}</h1>
-                  <RichContent html={descriptionHtml} className="mt-3 max-w-3xl" />
-                </div>
-              </>
-            ) : null}
-
-            {isClassified ? (
-              <div className="mx-auto w-full max-w-4xl rounded-2xl border border-border bg-card p-6">
-                <h2 className="text-lg font-semibold text-foreground">Business details</h2>
-                <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                  {content.website && (
-                    <div className="flex items-start gap-2">
-                      <Globe className="mt-0.5 h-4 w-4" />
-                      <a
-                        href={content.website}
-                        className="break-all text-foreground hover:underline"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {content.website}
-                      </a>
-                    </div>
-                  )}
-                  {content.phone && (
-                    <div className="flex items-start gap-2">
-                      <Phone className="mt-0.5 h-4 w-4" />
-                      <span>{content.phone}</span>
-                    </div>
-                  )}
-                  {content.email && (
-                    <div className="flex items-start gap-2">
-                      <Mail className="mt-0.5 h-4 w-4" />
-                      <a
-                        href={`mailto:${content.email}`}
-                        className="break-all text-foreground hover:underline"
-                      >
-                        {content.email}
-                      </a>
-                    </div>
-                  )}
-                  {location && (
-                    <div className="flex items-start gap-2">
-                      <MapPin className="mt-0.5 h-4 w-4" />
-                      <span>{location}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : null}
-
-            {content.highlights?.length && !isArticle ? (
-              <div className={cn("mt-8 rounded-2xl border border-border bg-card p-6", isClassified ? "mx-auto w-full max-w-4xl" : "")}>
-                <h2 className="text-lg font-semibold text-foreground">Highlights</h2>
-                <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+        <section className="mt-8 grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="space-y-6">
+            {content.highlights?.length ? (
+              <div className="rounded-[1.85rem] border border-[var(--kp-forest)]/12 bg-white p-6 shadow-[0_16px_45px_rgba(15,61,44,0.05)]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--kp-forest)]/75">Highlights</p>
+                <ul className="mt-4 space-y-3 text-sm leading-7 text-[var(--kp-forest)]/78">
                   {content.highlights.map((item) => (
-                    <li key={item}>• {item}</li>
+                    <li key={item} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--kp-forest)]" />
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
             ) : null}
 
-            {isClassified && mapEmbedUrl ? (
-              <div className="mx-auto w-full max-w-4xl rounded-2xl border border-border bg-card p-4">
-                <p className="text-sm font-semibold text-foreground">Location map</p>
-                <div className="mt-4 overflow-hidden rounded-xl border border-border">
-                  <iframe
-                    title="Business location map"
-                    src={mapEmbedUrl}
-                    className="h-56 w-full"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-            ) : null}
+            <div className="rounded-[1.85rem] border border-[var(--kp-forest)]/12 bg-white p-6 shadow-[0_16px_45px_rgba(15,61,44,0.05)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--kp-forest)]/75">About this {taskConfig?.label?.toLowerCase() || "post"}</p>
+              <p className="mt-4 text-sm leading-7 text-[var(--kp-forest)]/78">
+                The layout now gives the gallery, headline, and trust details their own rhythm, so the page feels more like a designed showcase than a stacked utility page.
+              </p>
+            </div>
 
+            {related.length ? (
+              <section>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-[var(--kp-forest-deep)]">More in {category}</h2>
+                  {taskConfig?.route ? (
+                    <Link href={taskConfig.route} className="text-sm font-medium text-[var(--kp-forest)] hover:text-[var(--kp-forest-deep)]">
+                      Browse all
+                    </Link>
+                  ) : null}
+                </div>
+                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {related.map((item) => (
+                    <TaskPostCard
+                      key={item.id}
+                      post={item}
+                      href={buildPostUrl(task, item.slug)}
+                      taskKey={task}
+                    />
+                  ))}
+                </div>
+              </section>
+            ) : null}
           </div>
 
-          {!hideSidebar ? (
-            <aside className="space-y-6">
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-lg font-semibold text-foreground">Listing details</h2>
-                <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                  {content.website && (
-                    <div className="flex items-start gap-2">
-                      <Globe className="mt-0.5 h-4 w-4" />
-                      <a
-                        href={content.website}
-                        className="break-all text-foreground hover:underline"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {content.website}
-                      </a>
-                    </div>
-                  )}
-                  {content.phone && (
-                    <div className="flex items-start gap-2">
-                      <Phone className="mt-0.5 h-4 w-4" />
-                      <span>{content.phone}</span>
-                    </div>
-                  )}
-                  {content.email && (
-                    <div className="flex items-start gap-2">
-                      <Mail className="mt-0.5 h-4 w-4" />
-                      <a
-                        href={`mailto:${content.email}`}
-                        className="break-all text-foreground hover:underline"
-                      >
-                        {content.email}
-                      </a>
-                    </div>
-                  )}
-                  {location && (
-                    <div className="flex items-start gap-2">
-                      <MapPin className="mt-0.5 h-4 w-4" />
-                      <span>{location}</span>
-                    </div>
-                  )}
-                </div>
-              {content.website ? (
-                <Button className="mt-5 w-full" asChild>
-                  <a href={content.website} target="_blank" rel="noreferrer">
-                    Visit Website
-                  </a>
-                </Button>
-              ) : null}
+          <aside className="space-y-5">
+            <div className="rounded-[1.85rem] border border-[var(--kp-forest)]/12 bg-white p-5 shadow-[0_16px_45px_rgba(15,61,44,0.05)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--kp-forest)]/75">Quick details</p>
+              <div className="mt-4 space-y-3">
+                {content.website ? (
+                  <InfoRow icon={Globe}>
+                    <a href={content.website} className="break-all text-[var(--kp-forest-deep)] hover:underline" target="_blank" rel="noreferrer">
+                      {content.website}
+                    </a>
+                  </InfoRow>
+                ) : null}
+                {content.phone ? (
+                  <InfoRow icon={Phone}>
+                    <span className="text-[var(--kp-forest-deep)]">{content.phone}</span>
+                  </InfoRow>
+                ) : null}
+                {content.email ? (
+                  <InfoRow icon={Mail}>
+                    <a href={`mailto:${content.email}`} className="break-all text-[var(--kp-forest-deep)] hover:underline">
+                      {content.email}
+                    </a>
+                  </InfoRow>
+                ) : null}
+                {location ? (
+                  <InfoRow icon={MapPin}>
+                    <span className="text-[var(--kp-forest-deep)]">{location}</span>
+                  </InfoRow>
+                ) : null}
+              </div>
             </div>
 
             {mapEmbedUrl ? (
-              <div className="rounded-2xl border border-border bg-card p-4">
-                <p className="text-sm font-semibold text-foreground">Location map</p>
-                <div className="mt-4 overflow-hidden rounded-xl border border-border">
+              <div className="rounded-[1.85rem] border border-[var(--kp-forest)]/12 bg-white p-4 shadow-[0_16px_45px_rgba(15,61,44,0.05)]">
+                <p className="px-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--kp-forest)]/75">Location map</p>
+                <div className="mt-3 overflow-hidden rounded-[1.35rem] border border-[var(--kp-forest)]/12">
                   <iframe
                     title="Business location map"
                     src={mapEmbedUrl}
-                    className="h-56 w-full"
+                    className="h-64 w-full"
                     loading="lazy"
                   />
                 </div>
               </div>
             ) : null}
 
+            <div className="rounded-[1.85rem] border border-[var(--kp-forest)]/12 bg-[var(--kp-mint)]/40 p-5">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--kp-forest)]/75">Related links</p>
+              <ul className="mt-4 space-y-3 text-sm text-[var(--kp-forest)]/75">
+                {related.map((item) => (
+                  <li key={`link-${item.id}`}>
+                    <Link href={buildPostUrl(task, item.slug)} className="inline-flex items-center gap-2 hover:text-[var(--kp-forest-deep)]">
+                      <ArrowRight className="h-4 w-4 text-[var(--kp-forest)]" />
+                      {item.title}
+                    </Link>
+                  </li>
+                ))}
+                {taskConfig?.route ? (
+                  <li>
+                    <Link href={taskConfig.route} className="inline-flex items-center gap-2 hover:text-[var(--kp-forest-deep)]">
+                      <ArrowRight className="h-4 w-4 text-[var(--kp-forest)]" />
+                      Browse all {taskConfig.label}
+                    </Link>
+                  </li>
+                ) : null}
+              </ul>
+            </div>
           </aside>
-          ) : null}
-        </div>
-
-        <section className="mt-12">
-          {related.length ? (
-            <>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-foreground">
-                More in {category}
-              </h2>
-              {taskConfig?.route && (
-                <Link
-                  href={taskConfig.route}
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  View all
-                </Link>
-              )}
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {related.map((item) => (
-                <TaskPostCard
-                  key={item.id}
-                  post={item}
-                  href={buildPostUrl(task, item.slug)}
-                />
-              ))}
-            </div>
-            </>
-          ) : null}
-          <nav className="mt-6 rounded-2xl border border-border bg-card/60 p-4">
-            <p className="text-sm font-semibold text-foreground">Related links</p>
-            <ul className="mt-2 space-y-2 text-sm">
-              {related.map((item) => (
-                <li key={`link-${item.id}`}>
-                  <Link
-                    href={buildPostUrl(task, item.slug)}
-                    className="text-primary underline-offset-4 hover:underline"
-                  >
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-              {taskConfig?.route ? (
-                <li>
-                  <Link
-                    href={taskConfig.route}
-                    className="text-primary underline-offset-4 hover:underline"
-                  >
-                    Browse all {taskConfig.label}
-                  </Link>
-                </li>
-              ) : null}
-              <li>
-                <Link
-                  href={`/search?q=${encodeURIComponent(category)}`}
-                  className="text-primary underline-offset-4 hover:underline"
-                >
-                  Search more in {category}
-                </Link>
-              </li>
-            </ul>
-          </nav>
         </section>
       </main>
       <Footer />
