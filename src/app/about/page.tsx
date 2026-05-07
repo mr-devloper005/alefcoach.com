@@ -135,66 +135,8 @@ export default function AboutPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-[var(--kp-forest)]/12 bg-gradient-to-b from-[var(--kp-mint)]/90 to-white">
-          <CardContent className="space-y-5 p-6 sm:p-8">
-            <div className="inline-flex items-center gap-2 text-[var(--kp-forest)]">
-              <Sparkles className="h-5 w-5" />
-              <span className="text-xs font-semibold uppercase tracking-[0.2em]">Milestones</span>
-            </div>
-            <h3 className="text-xl font-semibold text-[var(--kp-forest-deep)]">Recent chapter</h3>
-            <div className="space-y-4">
-              {moments.map((m) => (
-                <div key={m.year} className="flex gap-4 border-b border-[var(--kp-forest)]/10 pb-4 last:border-0 last:pb-0">
-                  <span className="w-12 shrink-0 text-sm font-semibold text-[var(--kp-forest)]">{m.year}</span>
-                  <p className="text-sm leading-relaxed text-[var(--kp-forest)]/78">{m.text}</p>
-                </div>
-              ))}
-            </div>
-            <Button variant="outline" asChild className="w-full rounded-full border-[var(--kp-forest)]/25 bg-white">
-              <Link href="/press">Read press notes</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+              </div>
 
-      <div className="mt-14">
-        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold text-[var(--kp-forest-deep)]">
-              People behind the bylines
-            </h2>
-            <p className="mt-1 max-w-xl text-sm text-[var(--kp-forest)]/72">
-              A small core team and a growing network of contributors—editors, researchers, and producers.
-            </p>
-          </div>
-          <Link href="/team" className="text-sm font-semibold text-[var(--kp-forest)] underline-offset-4 hover:underline">
-            Full team directory
-          </Link>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {mockTeamMembers.map((member) => (
-            <Card
-              key={member.id}
-              className="border-[var(--kp-forest)]/12 bg-white shadow-[0_12px_40px_rgba(15,61,44,0.05)] transition-transform hover:-translate-y-1"
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 border border-[var(--kp-forest)]/10">
-                    <AvatarImage src={member.avatar} alt={member.name} />
-                    <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-semibold text-[var(--kp-forest-deep)]">{member.name}</p>
-                    <p className="text-xs text-[var(--kp-forest)]/65">{member.role}</p>
-                  </div>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--kp-forest)]/75">{member.bio}</p>
-                <p className="mt-3 text-xs text-[var(--kp-forest)]/55">{member.location}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </PageShell>
+          </PageShell>
   );
 }

@@ -9,10 +9,10 @@ import { Footer } from "@/components/shared/footer";
 import { TaskImageCarousel } from "@/components/tasks/task-image-carousel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ContentImage } from "@/components/shared/content-image";
 import { RichContent, formatRichHtml } from "@/components/shared/rich-content";
 import { SITE_CONFIG, type TaskKey } from "@/lib/site-config";
 import { getLocalPostBySlug } from "@/lib/local-posts";
+import { LightboxImage } from "@/components/shared/lightbox-image";
 
 type PostContent = {
   category?: string;
@@ -150,7 +150,16 @@ export default function LocalPostDetailPage() {
             <h1 className="text-4xl font-semibold leading-tight text-foreground">{post.title}</h1>
             {images[0] ? (
               <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted">
-                <ContentImage src={images[0]} alt={post.title} fill className="object-cover" intrinsicWidth={1600} intrinsicHeight={900} />
+                <LightboxImage
+                  src={images[0]}
+                  alt={post.title}
+                  sizes="(max-width: 1024px) 100vw, 960px"
+                  imageClassName="object-cover"
+                  intrinsicWidth={1600}
+                  intrinsicHeight={900}
+                  priority
+                  hint="Open image"
+                />
               </div>
             ) : null}
             <RichContent html={formatRichHtml(description, "Details coming soon.")} />
