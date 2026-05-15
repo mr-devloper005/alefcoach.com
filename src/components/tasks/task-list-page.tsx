@@ -31,6 +31,11 @@ const extractText = (value?: string | null) =>
     .replace(/\s+/g, " ")
     .trim();
 
+const truncateText = (value: string, maxLength: number) => {
+  if (value.length <= maxLength) return value;
+  return `${value.slice(0, maxLength).trimEnd()}...`;
+};
+
 const getContent = (post: any) => (post?.content && typeof post.content === "object" ? post.content : {}) as Record<string, unknown>;
 
 export async function TaskListPage({ task, category }: { task: TaskKey; category?: string }) {
@@ -71,9 +76,10 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
 
   const leadPost = posts[0];
   const leadContent = getContent(leadPost);
-  const leadSummary = extractText(
+  const leadSummaryRaw = extractText(
     typeof leadContent.description === "string" ? leadContent.description : leadPost?.summary || ""
   );
+  const leadSummary = task === "article" ? truncateText(leadSummaryRaw, 260) : leadSummaryRaw;
   const accentText =
     task === "listing" || task === "classified" || task === "profile"
       ? "A warmer, slower scan rhythm for finding the right fit."
