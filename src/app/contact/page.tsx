@@ -1,18 +1,39 @@
-import { Mail, MessageSquareText, ShieldCheck } from 'lucide-react';
+import Link from "next/link";
+import { Clock, Mail, MessageSquare, Sparkles } from "lucide-react";
+import { PageShell } from "@/components/shared/page-shell";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { SITE_CONFIG } from "@/lib/site-config";
+import { CONTACT_PAGE_OVERRIDE_ENABLED, ContactPageOverride } from "@/overrides/contact-page";
+import { ContactLeadForm } from "@/components/shared/contact-lead-form";
 
-import { ContactLeadForm } from '@/components/shared/contact-lead-form';
-import { Footer } from '@/components/shared/footer';
-import { NavbarShell } from '@/components/shared/navbar-shell';
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || `hello@${SITE_CONFIG.domain}`;
+const mailtoHref = `mailto:${contactEmail}`;
 
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Alef Coach';
-
-const contactHighlights = [
-  { icon: Mail, title: 'Direct response', copy: 'Your message is saved securely and routed to the right team.' },
-  { icon: MessageSquareText, title: 'Clear details', copy: 'Share your requirement, question, or collaboration idea in one place.' },
-  { icon: ShieldCheck, title: 'Reliable follow-up', copy: 'We keep the request record so every conversation stays traceable.' },
+const channels = [
+  {
+    title: "Email us",
+    description: "Editorial, partnerships, and reader support all route through one inbox for a cleaner response flow.",
+    icon: Mail,
+  },
+  {
+    title: "Response time",
+    description: "Most notes receive a first reply within two business days.",
+    icon: Clock,
+  },
+  {
+    title: "What to include",
+    description: "Topic, deadline, and links help us route your request faster.",
+    icon: MessageSquare,
+  },
 ];
 
 export default function ContactPage() {
+  if (CONTACT_PAGE_OVERRIDE_ENABLED) {
+    return <ContactPageOverride />;
+  }
+
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,var(--kp-mint)_0%,#f7fdf9_30%,#ffffff_100%)] text-[var(--kp-ink)]">
       <NavbarShell />
@@ -30,6 +51,10 @@ export default function ContactPage() {
               <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--kp-forest)]/82">
                 Use this form to reach {siteName}. Your request will be recorded and shared with the support team for follow-up.
               </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
               <div className="mt-8 grid gap-4">
                 {contactHighlights.map((item) => (
@@ -45,12 +70,9 @@ export default function ContactPage() {
                 ))}
               </div>
             </div>
-
-            <ContactLeadForm />
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+          </CardContent>
+        </Card>
+      </div>
+    </PageShell>
   );
 }
