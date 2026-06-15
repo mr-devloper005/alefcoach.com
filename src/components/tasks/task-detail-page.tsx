@@ -253,9 +253,6 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                 <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/82">
                   <span>By {articleAuthor}</span>
                 </div>
-                {articleSummary ? (
-                  <p className="mt-6 max-w-2xl text-sm leading-7 text-white/84">{articleSummary}</p>
-                ) : null}
               </div>
               <div className="rounded-[1.8rem] border border-white/14 bg-white/10 p-3 backdrop-blur-sm">
                 <div className="relative aspect-[16/11] overflow-hidden rounded-[1.4rem] bg-[#d9c7b8]">
